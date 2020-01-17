@@ -1,4 +1,4 @@
+pyyaml
 psycopg2-binary
-mysqlclient
 sqlalchemy-utils
 sqlalchemy

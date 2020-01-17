@@ -1,13 +1,13 @@
 dbs:
 - url: postgres://dbuserA:passwordA@localhost:5432/dba
-  before: []
+  # before: []
 - url: postgres://dbuserB:passwordB@localhost:5432/dbb
-  permissions:
-    - all privileges
-  after: []
+  # permissions:
+  #   - all privileges
+  # after: []
 - url: postgres://dbuserBReader:passwordBReader@localhost:5432/dbb
-  permissions:
-    - SELECT
-    - UPDATE
-    - CREATE
-  after: []
+  # permissions:
+  #   - SELECT
+  #   - UPDATE
+  #   - CREATE
+  # after: []
