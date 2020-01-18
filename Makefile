@@ -17,7 +17,7 @@ all: build login push
 
 
 build:
-	docker build -t ${LATEST} \
+	docker build -t ${LATEST} -t ${VERSION} \
 		--build-arg BUILD_COMMIT_SHA1=${BUILD_COMMIT_SHA1} \
 		--build-arg BUILD_COMMIT_DATE=${BUILD_COMMIT_DATE} \
 		--build-arg BUILD_BRANCH=${BUILD_BRANCH} \

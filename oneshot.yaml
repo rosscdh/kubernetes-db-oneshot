@@ -1,13 +1,13 @@
 dbs:
 - url: postgres://dbuserA:passwordA@localhost:5432/dba
-  # before: []
+  grant_all: true
+  # statements: []
 - url: postgres://dbuserB:passwordB@localhost:5432/dbb
-  # permissions:
-  #   - all privileges
-  # after: []
+  grant_all: true
+  # statements: []
 - url: postgres://dbuserBReader:passwordBReader@localhost:5432/dbb
-  # permissions:
-  #   - SELECT
-  #   - UPDATE
-  #   - CREATE
-  # after: []
+  grant_all: false
+  statements:
+    - GRANT SELECT ON ALL TABLES IN SCHEMA public TO dbuserBReader;
+    - ALTER DEFAULT PRIVILEGES IN SCHEMA public
+        GRANT SELECT ON TABLES TO dbuserBReader;
