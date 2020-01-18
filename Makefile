@@ -30,4 +30,5 @@ login:
 
 push:
 	docker push ${LATEST}
+	docker push ${VERSION}
 
