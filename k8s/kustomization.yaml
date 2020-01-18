@@ -1,0 +1,13 @@
+resources:
+- manifest.yaml
+
+
+configMapGenerator:
+  - name: oneshot-cm
+    literals:
+      - MASTER_DB_URL=postgres://postgres:postgres@postgres.svc.default:5432/postgres
+
+secretGenerator:
+- name: oneshot-secret
+  files:
+  - oneshot.yaml=../oneshot.yaml
