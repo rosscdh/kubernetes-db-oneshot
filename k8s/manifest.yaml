@@ -10,10 +10,7 @@ spec:
       containers:
       - name: oneshot
         image: rosscdh/kubernetes-db-oneshot
-        # lifecycle:
-        #     postStart:
-        #       exec:
-        #         command: ["/bin/sh", "-c", "cp /tmp/oneshot/oneshot.yaml /oneshot/oneshot.yaml"]
+        imagePullPolicy: Always
         envFrom:
           - configMapRef:
               name: oneshot-cm

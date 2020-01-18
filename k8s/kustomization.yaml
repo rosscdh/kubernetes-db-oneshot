@@ -6,7 +6,7 @@ configMapGenerator:
   - name: oneshot-cm
     literals:
       - MASTER_DB_URL=postgres://postgres:postgres@192.168.0.24:5432/postgres
-      - MAKER_YAML=/tmp/oneshot/oneshot.yaml
+      - ONESHOT_YAML=/tmp/oneshot/oneshot.yaml
 
 secretGenerator:
 - name: oneshot-secret

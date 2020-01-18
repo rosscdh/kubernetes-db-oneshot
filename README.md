@@ -25,11 +25,11 @@ kustomize build --load_restrictor none k8s | kubectl apply -f
 >
 apiVersion: v1
 data:
-  MAKER_YAML: /tmp/oneshot/oneshot.yaml
   MASTER_DB_URL: postgres://postgres:postgres@192.168.0.24:5432/postgres
+  ONESHOT_YAML: /tmp/oneshot/oneshot.yaml
 kind: ConfigMap
 metadata:
-  name: oneshot-cm-g2d5g4dtmc
+  name: oneshot-cm-gmhm9f9mb8
 ---
 apiVersion: v1
 data:
@@ -51,7 +51,7 @@ spec:
       containers:
       - envFrom:
         - configMapRef:
-            name: oneshot-cm-g2d5g4dtmc
+            name: oneshot-cm-gmhm9f9mb8
         image: rosscdh/kubernetes-db-oneshot
         name: oneshot
         volumeMounts:

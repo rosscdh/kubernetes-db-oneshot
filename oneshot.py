@@ -7,7 +7,7 @@ from sqlalchemy_utils import database_exists, create_database
 
 from pathlib import Path
 
-MAKER_YAML = os.getenv('MAKER_YAML', 'oneshot.yaml')
+ONESHOT_YAML = os.getenv('ONESHOT_YAML', 'oneshot.yaml')
 MASTER_DB_URL = os.getenv('MASTER_DB_URL', 'postgres://postgres:postgres@localhost:5432/postgres')
 
 MASTER_DB = urlparse(MASTER_DB_URL)
@@ -20,7 +20,7 @@ master_engine = sa.create_engine(MASTER_DB_URL)
 master_conn = master_engine.connect()
 master_conn.execute("commit")
 
-data = yaml.load(Path(MAKER_YAML).read_bytes(), Loader=yaml.BaseLoader)
+data = yaml.load(Path(ONESHOT_YAML).read_bytes(), Loader=yaml.BaseLoader)
 
 def parse_db_url(url:str, use_master:bool=True) -> tuple:
     url = urlparse(db.get('url'))
