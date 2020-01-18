@@ -11,4 +11,4 @@ configMapGenerator:
 secretGenerator:
 - name: oneshot-secret
   files:
-  - oneshot.yaml=../oneshot.yaml
+  - oneshot.yaml=oneshot.yaml
