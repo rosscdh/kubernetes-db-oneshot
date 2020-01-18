@@ -1,3 +1,5 @@
+MASTER_DB_URL: postgres://postgres:postgres@192.168.0.24:5432/postgres
+
 create_dbs:
 - url: postgres://dbuserA:passwordA@192.168.0.24:5432/dba
 - url: postgres://dbuserB:passwordB@192.168.0.24:5432/dbb
