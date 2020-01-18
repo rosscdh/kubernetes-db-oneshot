@@ -10,6 +10,10 @@ you are also able to perform statements like privileges
 
 ```
 make build
+
+brew install kind kustomize kubectl
+kind create cluster
+make k8s | kubectl apply -f -
 ```
 
 ## Using
