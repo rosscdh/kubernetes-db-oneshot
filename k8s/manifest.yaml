@@ -3,19 +3,23 @@ kind: Job
 metadata:
   name: oneshot
 spec:
-  backoffLimit: 15
-  activeDeadlineSeconds: 100
+  backoffLimit: 50
+  activeDeadlineSeconds: 120
   template:
     spec:
       containers:
       - name: oneshot
         image: rosscdh/kubernetes-db-oneshot
+        # lifecycle:
+        #     postStart:
+        #       exec:
+        #         command: ["/bin/sh", "-c", "cp /tmp/oneshot/oneshot.yaml /oneshot/oneshot.yaml"]
         envFrom:
-          - secretRef:
+          - configMapRef:
               name: oneshot-cm
         volumeMounts:
         - name: oneshot-yaml
-          mountPath: "/oneshot/oneshot.yaml"
+          mountPath: "/tmp/oneshot"
           readOnly: true
       restartPolicy: Never
       volumes:
@@ -24,4 +28,4 @@ spec:
           secretName: oneshot-secret
           items:
             - key: oneshot.yaml
-              # path: my-group/my-username
+              path: oneshot.yaml

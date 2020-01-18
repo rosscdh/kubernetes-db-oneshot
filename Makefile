@@ -1,4 +1,4 @@
-.PHONY: all build login push run
+.PHONY: all build login push run k8s
 
 NAME     := 'rosscdh/kubernetes-db-oneshot'
 REGISTRY := ''
@@ -32,3 +32,5 @@ push:
 	docker push ${LATEST}
 	docker push ${VERSION}
 
+k8s:
+	@kustomize build --load_restrictor none ./k8s

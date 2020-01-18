@@ -1,9 +1,9 @@
 create_dbs:
-- url: postgres://dbuserA:passwordA@localhost:5432/dba
-- url: postgres://dbuserB:passwordB@localhost:5432/dbb
+- url: postgres://dbuserA:passwordA@192.168.0.24:5432/dba
+- url: postgres://dbuserB:passwordB@192.168.0.24:5432/dbb
 
 statements:
-- url: postgres://dbuserBReader:passwordBReader@localhost:5432/dbb
+- url: postgres://dbuserBReader:passwordBReader@192.168.0.24:5432/dbb
   statements:
   - GRANT SELECT ON ALL TABLES IN SCHEMA public TO dbuserBReader;
   - ALTER DEFAULT PRIVILEGES IN SCHEMA public
