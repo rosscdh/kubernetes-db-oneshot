@@ -29,7 +29,5 @@ login:
 	docker login ${REGISTRY}
 
 push:
-	docker push ${REGISTRY}/${LATEST}
+	docker push ${LATEST}
 
-run:
-	docker run -p8090:8080 ${LATEST}
