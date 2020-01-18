@@ -20,7 +20,9 @@ make k8s | kubectl apply -f -
 
 1. create a kustomize module
 
-```kustomization.yaml
+*kustomization.yaml*
+
+```
 resources:
 - https://raw.githubusercontent.com/rosscdh/kubernetes-db-oneshot/master/k8s
 
@@ -36,7 +38,9 @@ secretGenerator:
   - oneshot.yaml=my.local.oneshot.yaml
 ```
 
-```my.local.oneshot.yaml
+*my.local.oneshot.yaml*
+
+```
 
 # will create the dbs and the user/passwords using the MASTER_DB_URL
 
