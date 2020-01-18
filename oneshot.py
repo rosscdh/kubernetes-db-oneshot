@@ -73,17 +73,15 @@ if __name__ == '__main__':
             print(f"Could not connect to {new_db_url}, sorry")
 
     # Iterate over statements
-    for db in data.get('statements', []):
-        db_name, user, passwd, host, port, new_db_url = parse_db_url(url=db.get('url'))
+    db_name, user, passwd, host, port, new_db_url = parse_db_url(url=MASTER_DB_URL)
+    engine = sa.create_engine(new_db_url)
+    conn = engine.connect()
 
-        engine = sa.create_engine(new_db_url)
-        conn = engine.connect()
-
-        for statement in db.get('statements'):
-            print(f"STATEMENT: {statement}")
-            try:
-                master_engine.execute(sql)
-                master_conn.execute("commit")
-            except Exception as e:
-                print(e)
+    for statement in data.get('statements', []):
+        print(f"STATEMENT: {statement}")
+        try:
+            master_engine.execute(sql)
+            master_conn.execute("commit")
+        except Exception as e:
+            print(e)
 

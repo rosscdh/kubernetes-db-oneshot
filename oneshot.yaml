@@ -3,8 +3,6 @@ create_dbs:
 - url: postgres://dbuserB:passwordB@192.168.0.24:5432/dbb
 
 statements:
-- url: postgres://dbuserBReader:passwordBReader@192.168.0.24:5432/dbb
-  statements:
   - GRANT SELECT ON ALL TABLES IN SCHEMA public TO dbuserBReader;
   - ALTER DEFAULT PRIVILEGES IN SCHEMA public
       GRANT SELECT ON TABLES TO dbuserBReader;

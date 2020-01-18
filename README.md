@@ -16,12 +16,50 @@ kind create cluster
 make k8s | kubectl apply -f -
 ```
 
+## Setup
+
+1. create a kustomize module
+
+```kustomization.yaml
+resources:
+- https://raw.githubusercontent.com/rosscdh/kubernetes-db-oneshot/master/k8s/kustomization.yaml
+
+configMapGenerator:
+  - name: oneshot-cm
+    behavior: merge
+    literals:
+      - MASTER_DB_URL=postgres://postgres:postgres@192.168.0.24:5432/postgres
+
+secretGenerator:
+- name: oneshot-secret
+  files:
+  - oneshot.yaml=my.local.oneshot.yaml
+```
+
+```my.local.oneshot.yaml
+
+# will create the dbs and the user/passwords using the MASTER_DB_URL
+
+create_dbs:
+- url: postgres://dbuserA:passwordA@192.168.0.24:5432/dba
+- url: postgres://dbuserB:passwordB@192.168.0.24:5432/dbb
+
+# will use the MASTER_DB_URL to execute the statements
+statements:
+  - GRANT SELECT ON ALL TABLES IN SCHEMA public TO dbuserBReader;
+  - ALTER DEFAULT PRIVILEGES IN SCHEMA public
+      GRANT SELECT ON TABLES TO dbuserBReader;
+```
+
 ## Using
 
 * Will install into default ns by default, but feel free to override with `namespace: whatever`
 
 ```
-kustomize build --load_restrictor none k8s | kubectl apply -f
+kustomize build --load_restrictor none k8s | kubectl apply -f -
+or
+make k8s | kubectl apply -f -
+
 >
 apiVersion: v1
 data:
@@ -33,10 +71,10 @@ metadata:
 ---
 apiVersion: v1
 data:
-  oneshot.yaml: Y3JlYXRlX2RiczoKLSB1cmw6IHBvc3RncmVzOi8vZGJ1c2VyQTpwYXNzd29yZEFAMTkyLjE2OC4wLjI0OjU0MzIvZGJhCi0gdXJsOiBwb3N0Z3JlczovL2RidXNlckI6cGFzc3dvcmRCQDE5Mi4xNjguMC4yNDo1NDMyL2RiYgpzdGF0ZW1lbnRzOgotIHVybDogcG9zdGdyZXM6Ly9kYnVzZXJCUmVhZGVyOnBhc3N3b3JkQlJlYWRlckAxOTIuMTY4LjAuMjQ6NTQzMi9kYmIKICBzdGF0ZW1lbnRzOgogIC0gR1JBTlQgU0VMRUNUIE9OIEFMTCBUQUJMRVMgSU4gU0NIRU1BIHB1YmxpYyBUTyBkYnVzZXJCUmVhZGVyOwogIC0gQUxURVIgREVGQVVMVCBQUklWSUxFR0VTIElOIFNDSEVNQSBwdWJsaWMKICAgICAgR1JBTlQgU0VMRUNUIE9OIFRBQkxFUyBUTyBkYnVzZXJCUmVhZGVyOw==
+  oneshot.yaml: Y3JlYXRlX2RiczoKLSB1cmw6IHBvc3RncmVzOi8vZGJ1c2VyQTpwYXNzd29yZEFAMTkyLjE2OC4wLjI0OjU0MzIvZGJhCi0gdXJsOiBwb3N0Z3JlczovL2RidXNlckI6cGFzc3dvcmRCQDE5Mi4xNjguMC4yNDo1NDMyL2RiYgpzdGF0ZW1lbnRzOgogIC0gR1JBTlQgU0VMRUNUIE9OIEFMTCBUQUJMRVMgSU4gU0NIRU1BIHB1YmxpYyBUTyBkYnVzZXJCUmVhZGVyOwogIC0gQUxURVIgREVGQVVMVCBQUklWSUxFR0VTIElOIFNDSEVNQSBwdWJsaWMKICAgICAgR1JBTlQgU0VMRUNUIE9OIFRBQkxFUyBUTyBkYnVzZXJCUmVhZGVyOw==
 kind: Secret
 metadata:
-  name: oneshot-secret-7b8fhdcmhg
+  name: oneshot-secret-2dtkddcc5g
 type: Opaque
 ---
 apiVersion: batch/v1
@@ -53,6 +91,7 @@ spec:
         - configMapRef:
             name: oneshot-cm-gmhm9f9mb8
         image: rosscdh/kubernetes-db-oneshot
+        imagePullPolicy: Always
         name: oneshot
         volumeMounts:
         - mountPath: /tmp/oneshot
@@ -65,5 +104,5 @@ spec:
           items:
           - key: oneshot.yaml
             path: oneshot.yaml
-          secretName: oneshot-secret-7b8fhdcmhg
+          secretName: oneshot-secret-2dtkddcc5g
 ```
