@@ -2,6 +2,12 @@
 
 Create multiple databases and users on postgres databases as a kube Job
 
+## Building
+
+```
+make build
+```
+
 ## Using
 
 * Will install into default ns by default, but feel free to override with `namespace: whatever`
