@@ -2,6 +2,7 @@
 
 Create multiple databases and users on postgres databases as a kube Job.
 
+**DEV ENVS ONLY PLEASE**
 Define a MASTER_DB_URL with the permissions to create dbs (root/postgres)
 and then a set of dbs to be created alone with their user:pass which will then be created using the MASTER_DB_URL settings
 you are also able to perform statements like privileges
@@ -34,6 +35,7 @@ configMapGenerator:
 
 secretGenerator:
 - name: oneshot-secret
+  behaviour: replace
   files:
   - oneshot.yaml=my.local.oneshot.yaml
 ```
