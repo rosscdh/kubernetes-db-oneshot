@@ -27,12 +27,6 @@ make k8s | kubectl apply -f -
 resources:
 - github.com/rosscdh/kubernetes-db-oneshot/k8s/?ref=HEAD
 
-configMapGenerator:
-  - name: oneshot-cm
-    behavior: merge
-    literals:
-      - MASTER_DB_URL=postgres://postgres:postgres@192.168.0.24:5432/postgres
-
 secretGenerator:
 - name: oneshot-secret
   behavior: replace
@@ -43,6 +37,7 @@ secretGenerator:
 *my.local.oneshot.yaml*
 
 ```
+MASTER_DB_URL: postgres://postgres:postgres@192.168.0.24:5432/postgres
 
 # will create the dbs and the user/passwords using the MASTER_DB_URL
 
@@ -69,18 +64,17 @@ make k8s | kubectl apply -f -
 >
 apiVersion: v1
 data:
-  MASTER_DB_URL: postgres://postgres:postgres@192.168.0.24:5432/postgres
   ONESHOT_YAML: /tmp/oneshot/oneshot.yaml
 kind: ConfigMap
 metadata:
-  name: oneshot-cm-gmhm9f9mb8
+  name: oneshot-cm-hc72ffgcfh
 ---
 apiVersion: v1
 data:
-  oneshot.yaml: Y3JlYXRlX2RiczoKLSB1cmw6IHBvc3RncmVzOi8vZGJ1c2VyQTpwYXNzd29yZEFAMTkyLjE2OC4wLjI0OjU0MzIvZGJhCi0gdXJsOiBwb3N0Z3JlczovL2RidXNlckI6cGFzc3dvcmRCQDE5Mi4xNjguMC4yNDo1NDMyL2RiYgpzdGF0ZW1lbnRzOgogIC0gR1JBTlQgU0VMRUNUIE9OIEFMTCBUQUJMRVMgSU4gU0NIRU1BIHB1YmxpYyBUTyBkYnVzZXJCUmVhZGVyOwogIC0gQUxURVIgREVGQVVMVCBQUklWSUxFR0VTIElOIFNDSEVNQSBwdWJsaWMKICAgICAgR1JBTlQgU0VMRUNUIE9OIFRBQkxFUyBUTyBkYnVzZXJCUmVhZGVyOw==
+  oneshot.yaml: TUFTVEVSX0RCX1VSTDogcG9zdGdyZXM6Ly9wb3N0Z3Jlczpwb3N0Z3Jlc0AxOTIuMTY4LjAuMjQ6NTQzMi9wb3N0Z3JlcwpjcmVhdGVfZGJzOgotIHVybDogcG9zdGdyZXM6Ly9kYnVzZXJBOnBhc3N3b3JkQUAxOTIuMTY4LjAuMjQ6NTQzMi9kYmEKLSB1cmw6IHBvc3RncmVzOi8vZGJ1c2VyQjpwYXNzd29yZEJAMTkyLjE2OC4wLjI0OjU0MzIvZGJiCnN0YXRlbWVudHM6CiAgLSBHUkFOVCBTRUxFQ1QgT04gQUxMIFRBQkxFUyBJTiBTQ0hFTUEgcHVibGljIFRPIGRidXNlckJSZWFkZXI7CiAgLSBBTFRFUiBERUZBVUxUIFBSSVZJTEVHRVMgSU4gU0NIRU1BIHB1YmxpYwogICAgICBHUkFOVCBTRUxFQ1QgT04gVEFCTEVTIFRPIGRidXNlckJSZWFkZXI7
 kind: Secret
 metadata:
-  name: oneshot-secret-2dtkddcc5g
+  name: oneshot-secret-tdb6f5t54t
 type: Opaque
 ---
 apiVersion: batch/v1
@@ -95,7 +89,7 @@ spec:
       containers:
       - envFrom:
         - configMapRef:
-            name: oneshot-cm-gmhm9f9mb8
+            name: oneshot-cm-hc72ffgcfh
         image: rosscdh/kubernetes-db-oneshot
         imagePullPolicy: Always
         name: oneshot
@@ -110,5 +104,5 @@ spec:
           items:
           - key: oneshot.yaml
             path: oneshot.yaml
-          secretName: oneshot-secret-2dtkddcc5g
+          secretName: oneshot-secret-tdb6f5t54t
 ```
