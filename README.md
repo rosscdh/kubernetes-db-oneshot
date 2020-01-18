@@ -34,7 +34,7 @@ secretGenerator:
   - oneshot.yaml=oneshot.yaml
 ```
 
-*my.local.oneshot.yaml*
+*oneshot.yaml*
 
 ```
 MASTER_DB_URL: postgres://postgres:postgres@192.168.0.24:5432/postgres
