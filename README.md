@@ -22,7 +22,7 @@ make k8s | kubectl apply -f -
 
 ```kustomization.yaml
 resources:
-- https://raw.githubusercontent.com/rosscdh/kubernetes-db-oneshot/master/k8s/kustomization.yaml
+- https://raw.githubusercontent.com/rosscdh/kubernetes-db-oneshot/master/k8s
 
 configMapGenerator:
   - name: oneshot-cm
