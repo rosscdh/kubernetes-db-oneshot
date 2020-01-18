@@ -22,20 +22,26 @@ master_conn.execute("commit")
 
 data = yaml.load(Path(MAKER_YAML).read_bytes(), Loader=yaml.BaseLoader)
 
+def parse_db_url(url:str, use_master:bool=True) -> tuple:
+    url = urlparse(db.get('url'))
 
-for db in data.get('dbs', []):
-    if db.get('url'):
-        url = urlparse(db.get('url'))
+    db_name = url.path.split('/')[1]
+    user_pass, host_port = url.netloc.split('@')
 
-        db_name = url.path.split('/')[1]
-        user_pass, host_port = url.netloc.split('@')
+    user, passwd = user_pass.split(':')
+    host, port = host_port.split(':')
 
-        user, passwd = user_pass.split(':')
-        host, port = host_port.split(':')
-
+    if use_master:
         new_db_url = f"{MASTER_DB.scheme}://{MASTER_DB_USER}:{MASTER_DB_PASSWD}@{MASTER_DB_HOST}:{MASTER_DB_PORT}/{db_name}"
+    else:
+        new_db_url = f"{url.scheme}://{user}:{passwd}@{host}:{port}/{db_name}"
 
-        print(new_db_url)
+    return db_name, user, passwd, host, port, new_db_url
+
+
+if __name__ == '__main__':
+    for db in data.get('create_dbs', []):
+        db_name, user, passwd, host, port, new_db_url = parse_db_url(url=db.get('url'))
         engine = sa.create_engine(new_db_url)
 
         # create user access
@@ -46,25 +52,17 @@ for db in data.get('dbs', []):
             pass
         conn = engine.connect()
 
-        sql_set = [f"create user \"{user}\" with encrypted password '{passwd}';"]
-
-        if db.get('grant_all', True) is True:            
-            sql_set.append(f"grant ALL PRIVILEGES on database \"{db_name}\" to \"{user}\";")
+        sql_set = [f"create user \"{user}\" with encrypted password '{passwd}';",
+                f"grant ALL PRIVILEGES on database \"{db_name}\" to \"{user}\";"]
 
         for sql in sql_set:
             # print(f"HERE: {sql}")
             try:
                 master_engine.execute(sql)
                 master_conn.execute("commit")
-            except psycopg2.errors.DuplicateObject as e:
-                print(e)
-                # import pdb;pdb.set_trace()
-            except sa.exc.ProgrammingError as e:
-                print(e)
-                # import pdb;pdb.set_trace()
             except Exception as e:
-                # import pdb;pdb.set_trace()
                 print(e)
+
         new_db_url = f"{MASTER_DB.scheme}://{user}:{passwd}@{host}:{port}/{db_name}"
 
         try:
@@ -74,7 +72,9 @@ for db in data.get('dbs', []):
         except:
             print(f"Could not connect to {new_db_url}, sorry")
 
-    if db.get('statements'):
+    # Iterate over statements
+    for db in data.get('statements', []):
+        db_name, user, passwd, host, port, new_db_url = parse_db_url(url=db.get('url'))
 
         engine = sa.create_engine(new_db_url)
         conn = engine.connect()

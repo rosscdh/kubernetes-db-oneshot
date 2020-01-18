@@ -1,13 +1,10 @@
-dbs:
+create_dbs:
 - url: postgres://dbuserA:passwordA@localhost:5432/dba
-  grant_all: true
-  # statements: []
 - url: postgres://dbuserB:passwordB@localhost:5432/dbb
-  grant_all: true
-  # statements: []
+
+statements:
 - url: postgres://dbuserBReader:passwordBReader@localhost:5432/dbb
-  grant_all: false
   statements:
-    - GRANT SELECT ON ALL TABLES IN SCHEMA public TO dbuserBReader;
-    - ALTER DEFAULT PRIVILEGES IN SCHEMA public
-        GRANT SELECT ON TABLES TO dbuserBReader;
+  - GRANT SELECT ON ALL TABLES IN SCHEMA public TO dbuserBReader;
+  - ALTER DEFAULT PRIVILEGES IN SCHEMA public
+      GRANT SELECT ON TABLES TO dbuserBReader;
