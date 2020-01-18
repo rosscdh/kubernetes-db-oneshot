@@ -25,7 +25,7 @@ make k8s | kubectl apply -f -
 
 ```
 resources:
-- https://raw.githubusercontent.com/rosscdh/kubernetes-db-oneshot/master/k8s
+- github.com/rosscdh/kubernetes-db-oneshot/k8s/?ref=HEAD
 
 configMapGenerator:
   - name: oneshot-cm
@@ -35,9 +35,9 @@ configMapGenerator:
 
 secretGenerator:
 - name: oneshot-secret
-  behaviour: replace
+  behavior: replace
   files:
-  - oneshot.yaml=my.local.oneshot.yaml
+  - oneshot.yaml=oneshot.yaml
 ```
 
 *my.local.oneshot.yaml*
