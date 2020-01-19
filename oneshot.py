@@ -34,7 +34,7 @@ class BaseUserPrivCreator:
         raise NotImplemented
 
     def get_sql(self, **kwargs):
-        return set(self.create_user(**kwargs), self.create_privs(**kwargs))
+        return set([self.create_user(**kwargs), self.create_privs(**kwargs)])
 
 
 class PostgresUserCreator(BaseUserPrivCreator):
