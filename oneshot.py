@@ -47,7 +47,7 @@ class PostgresUserCreator(BaseUserPrivCreator):
 
 class MysqlUserCreator(BaseUserPrivCreator):
     def create_user(self, user: str, host: str, passwd: str, **kwargs:dict) -> str:
-        return f"CREATE USER '{user}'@'{host}' IDENTIFIED BY '{passwd}'';"
+        return f"CREATE USER '{user}'@'{host}' IDENTIFIED BY '{passwd}';"
 
     def create_privs(self, db_name: str, user: str, host: str, **kwargs:dict) -> str:
         return f"GRANT ALL PRIVILEGES ON {db_name}.* TO '{user}'@'{host}';"
