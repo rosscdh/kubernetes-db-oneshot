@@ -1,10 +1,18 @@
-MASTER_DB_URL: postgres://postgres:postgres@192.168.0.24:5432/postgres
+# MASTER_DB_URL: postgres://postgres:postgres@192.168.0.24:5432/postgres
+
+# create_dbs:
+# - url: postgres://dbuserA:passwordA@192.168.0.24:5432/dba
+# - url: postgres://dbuserB:passwordB@192.168.0.24:5432/dbb
+
+# statements:
+#   - GRANT SELECT ON ALL TABLES IN SCHEMA public TO dbuserBReader;
+#   - ALTER DEFAULT PRIVILEGES IN SCHEMA public
+#       GRANT SELECT ON TABLES TO dbuserBReader;
+
+MASTER_DB_URL: mysql://user:password@localhost:3306/mysql
 
 create_dbs:
-- url: postgres://dbuserA:passwordA@192.168.0.24:5432/dba
-- url: postgres://dbuserB:passwordB@192.168.0.24:5432/dbb
+- url: mysql://userA:passwordA@localhost:3306/dbA
+- url: mysql://userB:passwordB@localhost:3306/DbB
 
-statements:
-  - GRANT SELECT ON ALL TABLES IN SCHEMA public TO dbuserBReader;
-  - ALTER DEFAULT PRIVILEGES IN SCHEMA public
-      GRANT SELECT ON TABLES TO dbuserBReader;
+statements: []
