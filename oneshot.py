@@ -27,10 +27,10 @@ master_conn.execute("commit")
 
 
 class BaseUserPrivCreator:
-    def create_user(self, user: str, passwd: str) -> str:
+    def create_user(self, user: str, passwd: str, **kwargs:dict) -> str:
         raise NotImplemented
 
-    def create_privs(self, db_name: str, user: str) -> str:
+    def create_privs(self, db_name: str, user: str, **kwargs:dict) -> str:
         raise NotImplemented
 
     def get_sql(self, **kwargs):
@@ -38,18 +38,18 @@ class BaseUserPrivCreator:
 
 
 class PostgresUserCreator(BaseUserPrivCreator):
-    def create_user(self, user: str, passwd: str) -> str:
+    def create_user(self, user: str, passwd: str, **kwargs:dict) -> str:
         return f"create user \"{user}\" with encrypted password '{passwd}';"
 
-    def create_privs(self, db_name: str, user: str) -> str:
+    def create_privs(self, db_name: str, user: str, **kwargs:dict) -> str:
         return f'grant ALL PRIVILEGES on database "{db_name}" to "{user}";'
 
 
 class MysqlUserCreator(BaseUserPrivCreator):
-    def create_user(self, user: str, host: str, passwd: str) -> str:
+    def create_user(self, user: str, host: str, passwd: str, **kwargs:dict) -> str:
         return f"CREATE USER '{user}'@'{host}' IDENTIFIED BY '{passwd}'';"
 
-    def create_privs(self, db_name: str, user: str, host: str) -> str:
+    def create_privs(self, db_name: str, user: str, host: str, **kwargs:dict) -> str:
         return f"GRANT ALL PRIVILEGES ON {db_name}.* TO '{user}'@'{host}';"
 
 
