@@ -42,7 +42,7 @@ class PostgresUserCreator(BaseUserPrivCreator):
         return f"create user \"{user}\" with encrypted password '{passwd}';"
 
     def create_privs(self, db_name: str, user: str, **kwargs:dict) -> str:
-        return f'grant ALL PRIVILEGES on database "{db_name}" to "{user}";'
+        return f"grant ALL PRIVILEGES on database '{db_name}' to '{user}';"
 
 
 class MysqlUserCreator(BaseUserPrivCreator):
@@ -59,7 +59,7 @@ class UserPrivCreator:
         if scheme == "postgres":
             return PostgresUserCreator()
         elif scheme == "mysql":
-            return PostgresUserCreator()
+            return MysqlUserCreator()
         else:
             raise NotImplementedError("onyl mysql and postgres at the moment")
 
