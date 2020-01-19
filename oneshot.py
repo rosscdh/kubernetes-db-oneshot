@@ -55,7 +55,7 @@ class MysqlUserCreator(BaseUserPrivCreator):
 
 class UserPrivCreator:
     @staticmethod
-    def factory(self, scheme: str, *args, **kwargs):
+    def factory(scheme: str, *args, **kwargs):
         if scheme == "postgres":
             return PostgresUserCreator()
         elif scheme == "mysql":
