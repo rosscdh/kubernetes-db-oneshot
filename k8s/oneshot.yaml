@@ -11,6 +11,8 @@
 
 MASTER_DB_URL: mysql://user:password@localhost:3306/mysql
 
+pre_statements: []
+
 create_dbs:
 - url: mysql://userA:passwordA@localhost:3306/dbA
 - url: mysql://userB:passwordB@localhost:3306/DbB

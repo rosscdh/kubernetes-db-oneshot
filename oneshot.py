@@ -50,7 +50,7 @@ class MysqlUserCreator(BaseUserPrivCreator):
         return f"CREATE USER '{user}'@'{host}' IDENTIFIED BY '{passwd}';"
 
     def create_privs(self, db_name: str, user: str, host: str, **kwargs:dict) -> str:
-        return f"GRANT ALL PRIVILEGES ON {db_name}.* TO '{user}'@'{host}';"
+        return f"GRANT ALL PRIVILEGES ON {db_name}.* TO '{user}'@'{host}';FLUSH PRIVILEGES;"
 
 
 class UserPrivCreator:
@@ -82,6 +82,14 @@ def parse_db_url(url: str, use_master: bool = True) -> tuple:
 
 
 if __name__ == "__main__":
+    for statement in data.get("pre_statements", []):
+        print(f"PRE-STATEMENT: {statement}")
+        try:
+            master_engine.execute(sql)
+            master_conn.execute("commit")
+        except Exception as e:
+            print(e)
+
     for db in data.get("create_dbs", []):
         db_name, user, passwd, host, port, new_db_url, scheme = parse_db_url(
             url=db.get("url")
@@ -89,7 +97,6 @@ if __name__ == "__main__":
         engine = sa.create_engine(new_db_url)
 
         # create user access
-
         try:
             create_database(engine.url)
         except Exception as e:
