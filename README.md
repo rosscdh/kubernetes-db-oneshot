@@ -39,8 +39,11 @@ secretGenerator:
 ```
 MASTER_DB_URL: postgres://postgres:postgres@192.168.0.24:5432/postgres
 
-# will create the dbs and the user/passwords using the MASTER_DB_URL
+# perform statements using the master_db_url privs before any other actions
+pre_statements:
+  - DROP role 'monkey' CASCADE;
 
+# will create the dbs and the user/passwords using the MASTER_DB_URL
 create_dbs:
 - url: postgres://dbuserA:passwordA@192.168.0.24:5432/dba
 - url: postgres://dbuserB:passwordB@192.168.0.24:5432/dbb
