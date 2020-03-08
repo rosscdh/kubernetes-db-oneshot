@@ -85,7 +85,7 @@ type: Opaque
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: oneshot
+  name: oneshot-f4wd2
 spec:
   activeDeadlineSeconds: 120
   backoffLimit: 50
