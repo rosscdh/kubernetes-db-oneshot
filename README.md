@@ -38,7 +38,7 @@ secretGenerator:
 
 ```
 cat <<EOF > $PWD/oneshot.yaml
-MASTER_DB_URL: postgres://postgres:postgres@192.168.0.24:5432/postgres
+MASTER_DB_URL: postgres://postgres:postgres@postgres.dev.svc.cluster.local:5432/postgres
 
 # perform statements using the master_db_url privs before any other actions
 pre_statements:
@@ -46,8 +46,8 @@ pre_statements:
 
 # will create the dbs and the user/passwords using the MASTER_DB_URL
 create_dbs:
-- url: postgres://dbuserA:passwordA@192.168.0.24:5432/dba
-- url: postgres://dbuserB:passwordB@192.168.0.24:5432/dbb
+- url: postgres://dbuserA:passwordA@postgres.dev.svc.cluster.local:5432/dba
+- url: postgres://dbuserB:passwordB@postgres.dev.svc.cluster.local:5432/dbb
 
 # will use the MASTER_DB_URL to execute the statements
 statements:
