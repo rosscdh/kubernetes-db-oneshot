@@ -120,9 +120,9 @@ if __name__ == "__main__":
         try:
             engine = sa.create_engine(new_db_url)
             conn = engine.connect()
-            print(f"Success, Connected to {new_db_url}, yay")
+            print(f"SUCCESS, Connected to {new_db_url}, yay")
         except:
-            print(f"Could not connect to {new_db_url}, sorry")
+            print(f"FAILED, Could not connect to {new_db_url}, sorry")
 
     # Iterate over statements
     db_name, user, passwd, host, port, new_db_url, scheme = parse_db_url(
