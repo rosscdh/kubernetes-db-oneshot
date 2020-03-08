@@ -17,13 +17,13 @@ RUN addgroup --gid "$GID" "$USER" \
 WORKDIR /oneshot
 COPY . /oneshot
 
-RUN \
- apk add --no-cache postgresql-libs py-mysqldb mariadb-dev && \
- apk add --no-cache --virtual .build-deps gcc musl-dev postgresql-dev && \
+RUN apk update && apk add postgresql-libs && \
+ apk add --virtual .build-deps gcc musl-dev postgresql-dev && \
  python3 -m pip install -r requirements.txt --no-cache-dir && \
  apk --purge del .build-deps
  
 
 USER ${USER}
+
 ENTRYPOINT ["python"]
 CMD ["oneshot.py"]

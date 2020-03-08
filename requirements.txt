@@ -2,4 +2,3 @@ pyyaml
 psycopg2-binary
 sqlalchemy-utils
 sqlalchemy
-mysqlclient
