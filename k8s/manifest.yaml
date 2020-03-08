@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: oneshot
+  generateName: oneshot-
 spec:
   backoffLimit: 50
   activeDeadlineSeconds: 120
