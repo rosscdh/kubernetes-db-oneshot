@@ -37,6 +37,7 @@ secretGenerator:
 *oneshot.yaml*
 
 ```
+cat <<EOF > $PWD/oneshot.yaml
 MASTER_DB_URL: postgres://postgres:postgres@192.168.0.24:5432/postgres
 
 # perform statements using the master_db_url privs before any other actions
@@ -53,6 +54,7 @@ statements:
   - GRANT SELECT ON ALL TABLES IN SCHEMA public TO dbuserBReader;
   - ALTER DEFAULT PRIVILEGES IN SCHEMA public
       GRANT SELECT ON TABLES TO dbuserBReader;
+EOF
 ```
 
 ## Using
