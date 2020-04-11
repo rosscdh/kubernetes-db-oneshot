@@ -45,12 +45,12 @@ class PostgresUserCreator(BaseUserPrivCreator):
         return f"grant ALL PRIVILEGES on database \"{db_name}\" to \"{user}\";"
 
 
-class MysqlUserCreator(BaseUserPrivCreator):
-    def create_user(self, user: str, host: str, passwd: str, **kwargs:dict) -> str:
-        return f"CREATE USER '{user}'@'{host}' IDENTIFIED BY '{passwd}';"
+# class MysqlUserCreator(BaseUserPrivCreator):
+#     def create_user(self, user: str, host: str, passwd: str, **kwargs:dict) -> str:
+#         return f"CREATE USER '{user}'@'{host}' IDENTIFIED BY '{passwd}';"
 
-    def create_privs(self, db_name: str, user: str, host: str, **kwargs:dict) -> str:
-        return f"GRANT ALL PRIVILEGES ON {db_name}.* TO '{user}'@'{host}';FLUSH PRIVILEGES;"
+#     def create_privs(self, db_name: str, user: str, host: str, **kwargs:dict) -> str:
+#         return f"GRANT ALL PRIVILEGES ON {db_name}.* TO '{user}'@'{host}';FLUSH PRIVILEGES;"
 
 
 class UserPrivCreator:
@@ -59,9 +59,10 @@ class UserPrivCreator:
         if scheme == "postgres":
             return PostgresUserCreator()
         elif scheme == "mysql":
-            return MysqlUserCreator()
+            raise NotImplementedError('Support for Mysql does not yet exist')
+            # return MysqlUserCreator()
         else:
-            raise NotImplementedError("onyl mysql and postgres at the moment")
+            raise NotImplementedError("Only postgres at the moment")
 
 
 def parse_db_url(url: str, use_master: bool = True) -> tuple:
