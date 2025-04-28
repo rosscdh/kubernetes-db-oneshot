@@ -1,6 +1,5 @@
 import os
 import yaml
-import psycopg2
 import sqlalchemy as sa
 from urllib.parse import urlparse
 from sqlalchemy_utils import database_exists, create_database
@@ -27,10 +26,10 @@ MASTER_DB_HOST, MASTER_DB_PORT = host_port.split(":")
 
 class BaseUserPrivCreator:
     def create_user(self, user: str, passwd: str, **kwargs:dict) -> str:
-        raise NotImplemented
+        raise NotImplementedError
 
     def create_privs(self, db_name: str, user: str, **kwargs:dict) -> str:
-        raise NotImplemented
+        raise NotImplementedError
 
     def get_sql(self, **kwargs):
         return set([*self.create_user(**kwargs), *self.create_privs(**kwargs)])
@@ -71,8 +70,6 @@ class UserPrivCreator:
 
 
 def parse_db_url(url: str, use_master: bool = True) -> tuple:
-    url = urlparse(db.get("url"))
-
     db_name = url.path.split("/")[1]
     user_pass, host_port = url.netloc.split("@")
 
@@ -113,7 +110,7 @@ def process():
         try:
             if not database_exists(engine.url):
                 create_database(engine.url)
-        except Exception as e:
+        except Exception:
             pass
 
 
@@ -131,10 +128,10 @@ def process():
         new_db_url = f"{MASTER_DB.scheme}://{user}:{passwd}@{host}:{port}/{db_name}"
         try:
             engine = sa.create_engine(new_db_url)
-            conn = engine.connect()
+            engine.connect()
             print(f"SUCCESS, Connected to {new_db_url}, yay")
-        except:
-            print(f"FAILED, Could not connect to {new_db_url}, sorry")
+        except Exception as err:
+            print(f"FAILED, Could not connect to {new_db_url}, sorry {err}")
 
     #
     # Post Create Statments
