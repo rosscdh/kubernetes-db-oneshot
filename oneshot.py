@@ -86,7 +86,7 @@ if __name__ == "__main__":
     for statement in data.get("pre_statements", []):
         print(f"PRE-STATEMENT: {statement}")
         try:
-            master_engine.execute(sql)
+            master_engine.execute(statement)
             master_conn.execute("commit")
         except Exception as e:
             print(e)
