@@ -11,7 +11,7 @@ ONESHOT_YAML = os.getenv("ONESHOT_YAML", "oneshot.yaml")
 data = yaml.load(Path(ONESHOT_YAML).read_bytes(), Loader=yaml.BaseLoader)
 
 MASTER_DB_URL = data.get(
-    "MASTER_DB_URL", "postgres://postgres:postgres@localhost:5432/postgres"
+    "MASTER_DB_URL", "postgresql://postgres:postgres@localhost:5432/postgres"
 )
 
 MASTER_DB = urlparse(MASTER_DB_URL)
@@ -43,7 +43,7 @@ class PostgresUserCreator(BaseUserPrivCreator):
 
     def create_privs(self, db_name: str, user: str, **kwargs:dict) -> list[str]:
         return [
-            f"grant ALL PRIVILEGES on database \"{db_name}\" to \"{user}\";",
+            f"GRANT ALL PRIVILEGES on database \"{db_name}\" TO \"{user}\";",
             f"GRANT USAGE ON SCHEMA public TO \"{user}\";",
             f"ALTER DATABASE \"{db_name}\" OWNER TO \"{user}\";",
         ]
@@ -70,6 +70,7 @@ class UserPrivCreator:
 
 
 def parse_db_url(url: str, use_master: bool = True) -> tuple:
+    url = urlparse(url)
     db_name = url.path.split("/")[1]
     user_pass, host_port = url.netloc.split("@")
 
