@@ -21,9 +21,8 @@ user_pass, host_port = MASTER_DB.netloc.split("@")
 MASTER_DB_USER, MASTER_DB_PASSWD = user_pass.split(":")
 MASTER_DB_HOST, MASTER_DB_PORT = host_port.split(":")
 
-master_engine = sa.create_engine(MASTER_DB_URL)
-master_conn = master_engine.connect()
-master_conn.execute("commit")
+# master_conn = master_engine.connect()
+# master_conn.execute(sa.text("commit"))
 
 
 class BaseUserPrivCreator:
@@ -34,15 +33,21 @@ class BaseUserPrivCreator:
         raise NotImplemented
 
     def get_sql(self, **kwargs):
-        return set([self.create_user(**kwargs), self.create_privs(**kwargs)])
+        return set([*self.create_user(**kwargs), *self.create_privs(**kwargs)])
 
 
 class PostgresUserCreator(BaseUserPrivCreator):
-    def create_user(self, user: str, passwd: str, **kwargs:dict) -> str:
-        return f"create user \"{user}\" with encrypted password '{passwd}';"
+    def create_user(self, user: str, passwd: str, **kwargs:dict) -> list[str]:
+        return [
+            f"create user \"{user}\" with encrypted password '{passwd}';",
+        ]
 
-    def create_privs(self, db_name: str, user: str, **kwargs:dict) -> str:
-        return f"grant ALL PRIVILEGES on database \"{db_name}\" to \"{user}\";"
+    def create_privs(self, db_name: str, user: str, **kwargs:dict) -> list[str]:
+        return [
+            f"grant ALL PRIVILEGES on database \"{db_name}\" to \"{user}\";",
+            f"GRANT USAGE ON SCHEMA public TO \"{user}\";",
+            f"ALTER DATABASE \"{db_name}\" OWNER TO \"{user}\";",
+        ]
 
 
 # class MysqlUserCreator(BaseUserPrivCreator):
@@ -56,7 +61,7 @@ class PostgresUserCreator(BaseUserPrivCreator):
 class UserPrivCreator:
     @staticmethod
     def factory(scheme: str, *args, **kwargs):
-        if scheme == "postgres":
+        if scheme == "postgresql":
             return PostgresUserCreator()
         elif scheme == "mysql":
             raise NotImplementedError('Support for Mysql does not yet exist')
@@ -82,42 +87,48 @@ def parse_db_url(url: str, use_master: bool = True) -> tuple:
     return db_name, user, passwd, host, port, new_db_url, url.scheme
 
 
-if __name__ == "__main__":
-    for statement in data.get("pre_statements", []):
-        print(f"PRE-STATEMENT: {statement}")
-        try:
-            master_engine.execute(statement)
-            master_conn.execute("commit")
-        except Exception as e:
-            print(e)
+def process():
+    #
+    # Pre Statements
+    #
+    master_engine = sa.create_engine(MASTER_DB_URL)
+    with master_engine.begin() as master_conn:
+        for statement in data.get("pre_statements", []):
+            print(f"PRE-STATEMENT: {statement}")
+            try:
+                master_conn.execute(sa.text(statement))
+            except Exception as e:
+                print(e)
 
+    #
+    # Create Databases
+    #
     for db in data.get("create_dbs", []):
         db_name, user, passwd, host, port, new_db_url, scheme = parse_db_url(
             url=db.get("url")
         )
+
         engine = sa.create_engine(new_db_url)
 
-        # create user access
         try:
-            create_database(engine.url)
+            if not database_exists(engine.url):
+                create_database(engine.url)
         except Exception as e:
             pass
-        conn = engine.connect()
+
 
         db_factory = UserPrivCreator.factory(scheme=scheme)
         sql_set = db_factory.get_sql(
             user=user, passwd=passwd, host=host, db_name=db_name
         )
-
-        for sql in sql_set:
-            try:
-                master_engine.execute(sql)
-                master_conn.execute("commit")
-            except Exception as e:
-                print(e)
+        with master_engine.begin() as master_conn:
+            for statement in sql_set:
+                try:
+                    master_conn.execute(sa.text(statement))
+                except Exception as e:
+                    print(e)
 
         new_db_url = f"{MASTER_DB.scheme}://{user}:{passwd}@{host}:{port}/{db_name}"
-
         try:
             engine = sa.create_engine(new_db_url)
             conn = engine.connect()
@@ -125,17 +136,17 @@ if __name__ == "__main__":
         except:
             print(f"FAILED, Could not connect to {new_db_url}, sorry")
 
-    # Iterate over statements
-    db_name, user, passwd, host, port, new_db_url, scheme = parse_db_url(
-        url=MASTER_DB_URL
-    )
-    engine = sa.create_engine(new_db_url)
-    conn = engine.connect()
+    #
+    # Post Create Statments
+    #
+    with master_engine.begin() as master_conn:
+        for statement in data.get("statements", []):
+            print(f"STATEMENT: {statement}")
+            try:
+                master_conn.execute(sa.text(statement))
+            except Exception as e:
+                print(f"ERROR: {e}")
 
-    for statement in data.get("statements", []):
-        print(f"STATEMENT: {statement}")
-        try:
-            master_engine.execute(sql)
-            master_conn.execute("commit")
-        except Exception as e:
-            print(e)
+
+if __name__ == "__main__":
+    process()
