@@ -119,8 +119,8 @@ def process():
         sql_set = db_factory.get_sql(
             user=user, passwd=passwd, host=host, db_name=db_name
         )
-        with master_engine.begin() as master_conn:
-            for statement in sql_set:
+        for statement in sql_set:
+            with master_engine.begin() as master_conn:
                 try:
                     master_conn.execute(sa.text(statement))
                 except Exception as e:
