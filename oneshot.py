@@ -38,7 +38,7 @@ class BaseUserPrivCreator:
 class PostgresUserCreator(BaseUserPrivCreator):
     def create_user(self, user: str, passwd: str, **kwargs:dict) -> list[str]:
         return [
-            f"create user \"{user}\" with encrypted password '{passwd}';",
+            f"CREATE USER \"{user}\" WITH PASSWORD '{passwd}';",
         ]
 
     def create_privs(self, db_name: str, user: str, **kwargs:dict) -> list[str]:
